@@ -95,7 +95,7 @@ struct NftCollectionMetadata<phantom T> has key {
 #### Collection Creation
 
 ```move
-public fun create_collection_v2<T>(
+public fun create_collection<T>(
     publisher: &Publisher,
     registry: &mut NftRegistry,
     max_supply: Option<u64>,
@@ -118,7 +118,7 @@ public fun create_collection_v2<T>(
 
 **Convenience Function:**
 ```move
-public fun create_unlimited_collection_v2<T>(
+public fun create_unlimited_collection<T>(
     publisher: &Publisher,
     registry: &mut NftRegistry,
     owner_burn_allowed: bool,
@@ -294,7 +294,7 @@ Check if NFT is UNFT-compliant.
 **Example:**
 ```move
 // Game weapon that can be destroyed by game logic
-let (mint_cap, burn_cap_opt, metadata_cap) = unft::create_collection_v2<GameWeapon>(
+let (mint_cap, burn_cap_opt, metadata_cap) = unft::create_collection<GameWeapon>(
     publisher,
     registry,
     option::some(10000),
@@ -320,7 +320,7 @@ let burn_cap = option::extract(&mut burn_cap_opt);
 **Example:**
 ```move
 // Art NFT that owners can burn
-let (mint_cap, burn_cap_opt, metadata_cap) = unft::create_collection_v2<ArtNFT>(
+let (mint_cap, burn_cap_opt, metadata_cap) = unft::create_collection<ArtNFT>(
     publisher,
     registry,
     option::some(100),
@@ -570,7 +570,7 @@ module my_game::character {
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
     use sui::transfer;
-    use unft_standard::unft_standard_v2 as unft;
+    use unft_standard::unft_standard as unft;
 
     struct Character has key, store {
         id: UID,
@@ -583,7 +583,7 @@ module my_game::character {
     fun init(otw: CHARACTER, ctx: &mut TxContext) {
         let publisher = package::claim(otw, ctx);
 
-        let (mint_cap, burn_cap, metadata_cap) = unft::create_collection_v2<Character>(
+        let (mint_cap, burn_cap, metadata_cap) = unft::create_collection<Character>(
             &publisher,
             registry,
             option::some(10000),  // Max 10k characters
@@ -632,7 +632,7 @@ module my_game::character {
 
 ```move
 module art_studio::limited_edition {
-    use unft_standard::unft_standard_v2 as unft;
+    use unft_standard::unft_standard as unft;
 
     struct LimitedArt has key, store {
         id: UID,
@@ -646,7 +646,7 @@ module art_studio::limited_edition {
         let publisher = package::claim(otw, ctx);
 
         // Start with unlimited, will finalize after mint
-        let (mint_cap, burn_cap, metadata_cap) = unft::create_unlimited_collection_v2<LimitedArt>(
+        let (mint_cap, burn_cap, metadata_cap) = unft::create_unlimited_collection<LimitedArt>(
             &publisher,
             registry,
             true,  // Owners can burn
@@ -677,7 +677,7 @@ module art_studio::limited_edition {
 
 ```move
 module rpg::weapons {
-    use unft_standard::unft_standard_v2 as unft;
+    use unft_standard::unft_standard as unft;
 
     struct Weapon has key, store {
         id: UID,
@@ -690,7 +690,7 @@ module rpg::weapons {
     fun init(otw: WEAPON, ctx: &mut TxContext) {
         let publisher = package::claim(otw, ctx);
 
-        let (mint_cap, burn_cap_opt, metadata_cap) = unft::create_collection_v2<Weapon>(
+        let (mint_cap, burn_cap_opt, metadata_cap) = unft::create_collection<Weapon>(
             &publisher,
             registry,
             option::none(),  // Unlimited
@@ -740,7 +740,7 @@ The reference implementation includes 61+ comprehensive tests covering:
 - NFT discovery helpers
 
 **Test Files:**
-- `tests/unft_standard_v2_tests.move` - Core functionality
+- `tests/unft_standard_tests.move` - Core functionality
 - `tests/unft_discoverability_tests.move` - NFT discovery
 - `tests/edge_case_tests.move` - Edge cases and error conditions
 - `tests/gas_optimization_tests.move` - Batch operation efficiency
